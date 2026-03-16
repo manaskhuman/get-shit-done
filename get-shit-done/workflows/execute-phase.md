@@ -178,6 +178,27 @@ Execute each wave in sequence. Within a wave: parallel if `PARALLELIZATION=true`
 
    For real failures: report which plan failed → ask "Continue?" or "Stop?" → if continue, dependent plans may also fail. If stop, partial completion report.
 
+5b. **Pre-wave dependency check (waves 2+ only):**
+
+    Before spawning wave N+1, for each plan in the upcoming wave:
+    ```bash
+    node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" verify key-links {phase_dir}/{plan}-PLAN.md
+    ```
+
+    If any key-link from a PRIOR wave's artifact fails verification:
+
+    ## Cross-Plan Wiring Gap
+
+    | Plan | Link | From | Expected Pattern | Status |
+    |------|------|------|-----------------|--------|
+    | {plan} | {via} | {from} | {pattern} | NOT FOUND |
+
+    Wave {N} artifacts may not be properly wired. Options:
+    1. Investigate and fix before continuing
+    2. Continue (may cause cascading failures in wave {N+1})
+
+    Key-links referencing files in the CURRENT (upcoming) wave are skipped.
+
 6. **Execute checkpoint plans between waves** — see `<checkpoint_handling>`.
 
 7. **Proceed to next wave.**
